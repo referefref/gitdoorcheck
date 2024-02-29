@@ -1,0 +1,4 @@
+gitpython
+openai
+dotenv
+shutil
