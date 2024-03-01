@@ -36,25 +36,7 @@ python3 gitdoorcheck.py --repo-url="https://github.com/Inplex-sys/BlackCap-Grabb
       "severity": "High",
       "description": "Collects a webhook URL from the user, which could be used to exfiltrate data."
     },
-    {
-      "type": "Suspicious Input Handling",
-      "file_name": "builder.py",
-      "line_number": "92",
-      "code_snippet": "self.address_replacer = input(...)",
-      "confidence": "80",
-      "severity": "Medium",
-      "description": "Asks if the user wants to replace all copied cryptocurrency addresses, which could be used for cryptocurrency theft."
-    },
 ...
-    {
-      "type": "Malicious Code",
-      "file_name": "inject.js",
-      "line_number": "1",
-      "code_snippet": "process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0",
-      "confidence": "100",
-      "severity": "High",
-      "description": "Disables TLS/SSL certificate validation which can expose the application to man-in-the-middle attacks."
-    },
     {
       "type": "Credential Theft",
       "file_name": "inject.js",
@@ -81,15 +63,6 @@ python3 gitdoorcheck.py --repo-url="https://github.com/Inplex-sys/BlackCap-Grabb
       "confidence": "100",
       "severity": "High",
       "description": "Intercepts and potentially alters web requests, which can be used for malicious purposes."
-    },
-    {
-      "type": "Persistence",
-      "file_name": "inject.js",
-      "line_number": "N/A",
-      "code_snippet": "const checUpdate = () => {...}",
-      "confidence": "90",
-      "severity": "Medium",
-      "description": "Attempts to persistently inject malicious code into the application."
     },
     {
       "type": "Malicious Code",
