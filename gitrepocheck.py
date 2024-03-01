@@ -109,7 +109,10 @@ async def main(repo_url, local_repo_path, output_file=None):
         analysis_results = await analyze_repo_files(session, local_repo_path)
         filtered_results = [result for result in analysis_results if not isinstance(result, dict) or "error" not in result]
         detected_threats = [item for sublist in filtered_results for item in (sublist if isinstance(sublist, list) else [sublist])]
-        overall_confidence = max(detected_threat["confidence"] for detected_threat in detected_threats if "confidence" in detected_threat)
+        if isinstance(detected_threats, list) and all(isinstance(item, dict) for item in detected_threats):
+            overall_confidence = max((detected_threat["confidence"] for detected_threat in detected_threats if "confidence" in detected_threat), default=0)
+        else:
+            overall_confidence = 0
     
         report = {
             "project_name": repo_url.split('/')[-1],
