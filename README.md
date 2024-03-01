@@ -4,6 +4,7 @@
 * I find myself pulling way too many random git repos, this is just a simple means of doing some static analysis.
 * Uses GPT-4 (or another openAI compatible API endpoint) to check for any backdoors, malicious code and so on within compilable or executable code.
 * Outputs as a json file
+* Can be used in CI pipeline and fail build if threshold is exceeded
 * Uses list of programming languages extensions from: https://github.com/aymen-mouelhi
 
 ## Hive mind 
