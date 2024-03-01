@@ -36,9 +36,7 @@ def parse_extracted_json(extracted_json_str):
         The parsed JSON object if successful, None otherwise.
     """
     try:
-        # Interpret escape sequences by encoding to bytes then decoding.
         interpreted_str = bytes(extracted_json_str, "utf-8").decode("unicode_escape")
-        # Attempt to load the JSON.
         return json.loads(interpreted_str)
     except json.JSONDecodeError as e:
         print(f"Failed to parse JSON after interpreting escape sequences: {e}")
@@ -49,7 +47,7 @@ async def analyze_code_with_openai(session, content, file_path, retry_count=0, m
         print(Fore.RED + "Maximum retry limit reached. Moving on without additional retries.")
         return {"error": "Analysis failed due to retry limit."}
 
-    system_prompt = 'Analyze the following source code for any potential backdoors, vulnerabilities, privilege escalation, persistence or any other potentially malicious functions. If there are no obvious back doors or remote connections just return 0 otherwise return a value between 1 and 10 and a json body matching the following [{ "type": "", "line_number": "", "code_snippet": "", "severity": "", "description": "" }]. Files that are supporting or describing backdoors, vulnerabilities or malicious activity should be ignored or treated as benign, this includes names of vulnerabilities and so on. Only executable code that is confirmed to be malicious should be flagged.'
+    system_prompt = 'Analyze the following source code for any potential backdoors, extraction of credentials, secrets or access tokens, vulnerabilities, privilege escalation, persistence or any other potentially malicious functions. If there are no obvious back doors or remote connections just return 0 otherwise return a json body matching the following [{ "type": "", "file_name": "", "line_number": "", "code_snippet": "", "confidence": "", "severity": "", "description": "" }]. Files that are supporting or describing backdoors, vulnerabilities or malicious activity should be ignored or treated as benign, this includes names of vulnerabilities and so on. Only executable code that is confirmed to be malicious should be flagged. Confidence should be a number between 0 and 100.'
     prompt = f"{system_prompt}\n\nSource code from {file_path}:\n{content}"
 
     message = [
@@ -109,19 +107,20 @@ async def main(repo_url, local_repo_path, output_file=None):
     clone_repo(repo_url, local_repo_path)
     async with aiohttp.ClientSession() as session:
         analysis_results = await analyze_repo_files(session, local_repo_path)
-        
         filtered_results = [result for result in analysis_results if not isinstance(result, dict) or "error" not in result]
         detected_threats = [item for sublist in filtered_results for item in (sublist if isinstance(sublist, list) else [sublist])]
-        
+        overall_confidence = max(detected_threat["confidence"] for detected_threat in detected_threats if "confidence" in detected_threat)
+    
         report = {
             "project_name": repo_url.split('/')[-1],
             "project_url": repo_url,
             "analysis_date": datetime.now().isoformat(),
             "total_files_analyzed": len(analysis_results),
             "total_threats_detected": len(detected_threats),
-            "detected_threats": detected_threats
+            "detected_threats": detected_threats,
+            "overall_confidence": overall_confidence
         }
-
+    
         if output_file:
             with open(output_file, 'w') as f:
                 json.dump(report, f, indent=2)
