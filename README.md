@@ -13,7 +13,9 @@
 ```usage: gitdoorcheck.py [-h] --repo-url REPO_URL --local-repo-path LOCAL_REPO_PATH [--output OUTPUT]```
 
 ## Example usage
-```python3 gitdoorcheck.py --repo-url="https://github.com/alexAubin/evilBunnyTrojan" --local-repo-path ./test
+```python3
+
+python3 gitdoorcheck.py --repo-url="https://github.com/alexAubin/evilBunnyTrojan" --local-repo-path ./test
 Cloning repository...
 Repository successfully cloned into ./test.
 Preparing analysis for ./test/evilBunnyServer.py...
@@ -62,4 +64,5 @@ Preparing analysis for ./test/evilBunnyTrojan.py...
       "description": "The infinite loop in animatedBunny function can lead to uncontrolled resource consumption."
     }
   ]
-}```
+}
+```
