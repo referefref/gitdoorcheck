@@ -6,6 +6,9 @@
 * Outputs as a json file
 * Uses list of programming languages extensions from: https://github.com/aymen-mouelhi
 
+## Hive mind 
+* The day this was published there was also [***an article on arstechnica***](https://arstechnica.com/security/2024/02/github-besieged-by-millions-of-malicious-repositories-in-ongoing-attack/) about git repos containing backdoor code and mimicking common libraries (typosquatting etc.)
+
 ## Setup
 * Place your openAI API key in the .env file (if required)
 
