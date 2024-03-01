@@ -215,11 +215,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install gitpython aiohttp # Add other dependencies as needed
+        pip install gitpython openai dotenv shutil
 
     - name: Run Security Analysis
       run: |
-        python checker2.py --repo-url ${{ github.event.repository.html_url }} --local-repo-path ./repo --threshold 50
+        python gitdoorcheck.py --repo-url ${{ github.event.repository.html_url }} --local-repo-path ./repo --threshold 50
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
