@@ -80,7 +80,7 @@ async def analyze_code_with_openai(session, content, file_path, retry_count=0, m
                         print(Fore.YELLOW + "Failed to interpret JSON data correctly.")
                         return {"error": "Failed to interpret JSON data correctly"}
                 else:
-                    print(Fore.YELLOW + "No valid JSON data found in response.")
+                    #print(Fore.YELLOW + "No valid JSON data found in response.")
                     return {"error": "No JSON data found"}
             else:
                 print(Fore.RED + f"Non-200 response from OpenAI API. Status: {response.status}")
@@ -103,7 +103,7 @@ async def analyze_repo_files(session, repo_dir):
     results = await asyncio.gather(*tasks)
     return results
 
-async def main(repo_url, local_repo_path, output_file=None):
+async def main(repo_url, local_repo_path, output_file=None, threshold=0):
     clone_repo(repo_url, local_repo_path)
     async with aiohttp.ClientSession() as session:
         analysis_results = await analyze_repo_files(session, local_repo_path)
@@ -130,6 +130,9 @@ async def main(repo_url, local_repo_path, output_file=None):
             print(f"Analysis report saved to {output_file}")
         else:
             print(json.dumps(report, indent=2))
+        if overall_confidence > threshold:
+            print(f"Overall confidence {overall_confidence} exceeds threshold {threshold}. Failing build.")
+            exit(1)
 
 def clone_repo(repo_url, repo_dir):
     print(Fore.BLUE + "Cloning repository...")
@@ -144,6 +147,8 @@ if __name__ == "__main__":
     parser.add_argument('--repo-url', required=True, help='The URL of the GitHub repository to analyse')
     parser.add_argument('--local-repo-path', required=True, help='Local directory path to clone the repository into')
     parser.add_argument('--output', help='Path to save the analysis report as a JSON file (optional)')
-    args = parser.parse_args()
+    parser.add_argument('--threshold', type=int, default=0, help='Threshold score to cause a build to fail')
 
-    asyncio.run(main(args.repo_url, args.local_repo_path, args.output))
+    args = parser.parse_args()
+    
+    asyncio.run(main(args.repo_url, args.local_repo_path, args.output, args.threshold))
